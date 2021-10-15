@@ -194,9 +194,9 @@ class Door:
         self.ID = _id
 
 
-# def scenario1():
-#     column = Column(1, "online", 10, 2)
-#     column.elevatorsList[0].currentFloor = 2
-#     column.elevatorsList[1].currentFloor = 6
-#     elevator = column.requestElevator(3, "up")
-#     elevator.requestFloor(7)
+    
+    column = Column(1, 10, 2)
+    column.elevatorsList[0].currentFloor = 2
+    column.elevatorsList[1].currentFloor = 6
+    elevator = column.requestElevator(3, "up")
+    elevator.requestFloor(7)
