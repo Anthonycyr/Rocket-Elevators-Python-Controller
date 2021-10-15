@@ -21,20 +21,20 @@ class Column:
         global callButtonID
         buttonFloor = 1
 
-        for i in range(1,_amountOfFloors):
+        for i in range(_amountOfFloors):
             if (i < _amountOfFloors):
-                callButton = CallButton(callButtonID, "off", buttonFloor)#"up"
+                callButton = CallButton(callButtonID, buttonFloor, "up")#"up"
                 self.callButtonList.append(callButton)
                 callButtonID += 1
             if (i > 1):
-                callButton = CallButton(callButtonID, "off", buttonFloor, "down")#"down"
+                callButton = CallButton(callButtonID, buttonFloor, "down")#"down"
                 self.callButtonList.append(callButton)
                 callButtonID += 1
         buttonFloor += 1
 
     def createElevators(self ,_amountOfFloors, _amountOfElevators):
         global elevatorID
-        for i in range(1, _amountOfElevators):
+        for i in range( _amountOfElevators):
             elevator = Elevator(i, _amountOfFloors)
             self.elevatorList.append(elevator)
             elevatorID += 1
@@ -49,47 +49,51 @@ class Column:
 
     def findElevator(self, requestedFloor, requestedDirection):
 
-        bestElevator: None
-        bestScore: 5
-        referenceGap: 10000000
+        bestScore = 5
+        referenceGap = 10000000
+        bestElevator = None
+        bestElevatorInformations = None
 
-        bestElevatorInformations = [bestElevator, bestScore, referenceGap]
         
-
         
         for elevator in self.elevatorList:
 
             if requestedFloor == elevator.currentFloor and elevator.status == "stopped" and requestedDirection == elevator.direction:
-                bestElevatorInformations = self.checkIfElevatorIsBetter(1, elevator, bestElevatorInformations, requestedFloor)
+                bestElevatorInformations = self.checkIfElevatorIsBetter(1, elevator,  bestElevator ,bestScore , referenceGap , requestedFloor)
 
             elif requestedFloor > elevator.currentFloor and elevator.direction == "up" and requestedDirection == elevator.direction: 
-                bestElevatorInformations = self.checkIfElevatorIsBetter(2, elevator, bestElevatorInformations, requestedFloor)
+                bestElevatorInformations = self.checkIfElevatorIsBetter(2, elevator,  bestElevator ,bestScore , referenceGap , requestedFloor)
 
             elif requestedFloor < elevator.currentFloor and elevator.direction == "down" and requestedDirection == elevator.direction: 
-                bestElevatorInformations = self.checkIfElevatorIsBetter(2, elevator, bestElevatorInformations, requestedFloor)
+                bestElevatorInformations = self.checkIfElevatorIsBetter(2, elevator,  bestElevator ,bestScore , referenceGap , requestedFloor)
 
             elif elevator.status == "idle":
-                bestElevatorInformations = self.checkIfElevatorIsBetter(3, elevator, bestElevatorInformations, requestedFloor)
+                bestElevatorInformations = self.checkIfElevatorIsBetter(3, elevator,  bestElevator ,bestScore , referenceGap , requestedFloor)
 
             else: 
-                bestElevatorInformations = self.checkIfElevatorIsBetter(4, elevator, bestElevatorInformations, requestedFloor)
+                bestElevatorInformations = self.checkIfElevatorIsBetter(4, elevator, bestElevator ,bestScore , referenceGap , requestedFloor)
             
         
-        return bestElevatorInformations.bestElevator 
+        return bestElevatorInformations["bestElevator"]
     
-    def checkIfElevatorIsBetter(self ,scoreToCheck, newElevator, bestElevatorInformations, requestedFloor) :   
-        if scoreToCheck < bestElevatorInformations.bestScore : 
-            bestElevatorInformations.bestScore = scoreToCheck
-            bestElevatorInformations.bestElevator = newElevator
-            bestElevatorInformations.referenceGap = abs(newElevator.currentFloor - requestedFloor)
+    def checkIfElevatorIsBetter(self ,scoreToCheck, newElevator,  bestElevator ,bestScore , referenceGap , requestedFloor) :   
+        if scoreToCheck < bestScore : 
+            bestScore = scoreToCheck
+            bestElevator = newElevator
+            referenceGap = abs(newElevator.currentFloor - requestedFloor)
 
-        elif bestElevatorInformations.bestScore == scoreToCheck :
+        elif bestScore == scoreToCheck :
             gap = abs(newElevator.currentFloor - requestedFloor)
-            if (bestElevatorInformations.referenceGap > gap) :
-                bestElevatorInformations.bestScore = scoreToCheck 
-                bestElevatorInformations.bestElevator = newElevator
-                bestElevatorInformations.referenceGap = gap
-            
+            if (referenceGap > gap) :
+                bestScore = scoreToCheck 
+                bestElevator = newElevator
+                referenceGap = gap
+        
+        bestElevatorInformations = {
+            "bestElevator" : bestElevator ,
+            "bestScore" : bestScore,
+            "referenceGap" : referenceGap
+            }    
         
         return bestElevatorInformations
 
@@ -102,17 +106,18 @@ class Elevator:
         self.amountOfFloors = _amountOfFloors
         self.currentFloor = 1
         self.direction = None
-        self.door = Door(_id, "closed")
+        self.door = Door(_id)
         self.floorRequestButtonList = []
         self.floorRequestList = []
 
         self.createFloorRequestButtons(self.amountOfFloors)
 
     def createFloorRequestButtons(self,_amountOfFloors):
+        global floorRequestButtonID
         buttonFloor = 1
 
-        for x in _amountOfFloors :
-            floorRequestButton = FloorRequestButton(floorRequestButtonID,"off",buttonFloor)
+        for i in range(_amountOfFloors):
+            floorRequestButton = FloorRequestButton(floorRequestButtonID, i) #"off"
             self.floorRequestButtonList.append(floorRequestButton)
             buttonFloor += 1
 
@@ -168,9 +173,9 @@ class Elevator:
                 self.operateDoors()
 
 class CallButton:
-    def __init__(self, _id, _floor, _direction):
+    def __init__(self, _id, _floor, _direction ):
         self.ID = _id
-        # self.status = _status
+        #self.status = None
         self.floor = _floor
         self.direction = _direction        
 
@@ -178,10 +183,19 @@ class CallButton:
 class FloorRequestButton:
     def __init__(self, _id, _floor):
         self.ID = _id
+        #self.status = None
         self.floor = _floor
 
 
 class Door:
     def __init__(self, _id):
-        # self.status = _status
+        self.status = None
         self.ID = _id
+
+
+# def scenario1():
+#     column = Column(1, "online", 10, 2)
+#     column.elevatorsList[0].currentFloor = 2
+#     column.elevatorsList[1].currentFloor = 6
+#     elevator = column.requestElevator(3, "up")
+#     elevator.requestFloor(7)
