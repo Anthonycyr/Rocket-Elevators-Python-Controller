@@ -23,11 +23,11 @@ class Column:
 
         for i in range(_amountOfFloors):
             if (i < _amountOfFloors):
-                callButton = CallButton(callButtonID, buttonFloor, "up")#"up"
+                callButton = CallButton(callButtonID, buttonFloor, 'up')#"up"
                 self.callButtonList.append(callButton)
                 callButtonID += 1
             if (i > 1):
-                callButton = CallButton(callButtonID, buttonFloor, "down")#"down"
+                callButton = CallButton(callButtonID, buttonFloor, 'down')#"down"
                 self.callButtonList.append(callButton)
                 callButtonID += 1
         buttonFloor += 1
@@ -120,6 +120,7 @@ class Elevator:
             floorRequestButton = FloorRequestButton(floorRequestButtonID, i) #"off"
             self.floorRequestButtonList.append(floorRequestButton)
             buttonFloor += 1
+            floorRequestButtonID += 1
 
     def requestFloor(self , floor):
         self.floorRequestList.append(floor)
@@ -173,9 +174,9 @@ class Elevator:
                 self.operateDoors()
 
 class CallButton:
-    def __init__(self, _id, _floor, _direction ):
+    def __init__(self, _id, _floor, _direction, ):
         self.ID = _id
-        #self.status = None
+        self.status = 'push'
         self.floor = _floor
         self.direction = _direction        
 
@@ -183,13 +184,13 @@ class CallButton:
 class FloorRequestButton:
     def __init__(self, _id, _floor):
         self.ID = _id
-        #self.status = None
+        self.status = 'close'
         self.floor = _floor
 
 
 class Door:
     def __init__(self, _id):
-        self.status = None
+        self.status = 'close'
         self.ID = _id
 
 
