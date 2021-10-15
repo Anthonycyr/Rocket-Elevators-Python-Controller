@@ -18,13 +18,14 @@ class Column:
         self.createElevators(_amountOfFloors, _amountOfElevators)
 
     def createCallButtons(self,_amountOfFloors):
+        global callButtonID
         buttonFloor = 1
 
         for i in range(1,_amountOfFloors):
             if (i < _amountOfFloors):
                 callButton = CallButton(callButtonID, "off", buttonFloor)#"up"
                 self.callButtonList.append(callButton)
-                self.callButtonID += 1
+                callButtonID += 1
             if (i > 1):
                 callButton = CallButton(callButtonID, "off", buttonFloor, "down")#"down"
                 self.callButtonList.append(callButton)
@@ -32,14 +33,15 @@ class Column:
         buttonFloor += 1
 
     def createElevators(self ,_amountOfFloors, _amountOfElevators):
+        global elevatorID
         for i in range(1, _amountOfElevators):
             elevator = Elevator(i, _amountOfFloors)
             self.elevatorList.append(elevator)
-            self.elevatorID += 1
+            elevatorID += 1
 
     def requestElevator(self, floor , direction) :
-        self.elevator = self.findElevator(floor,direction)
-        self.floorRequestList.append(floor)
+        elevator = self.findElevator(floor,direction)
+        elevator.floorRequestList.append(floor)
         elevator.move()
         elevator.operateDoors()
 
@@ -142,6 +144,15 @@ class Elevator:
             self.floorRequestList.pop(0)
         
         self.status = "idself"
+
+    def sortFloorList(self) :
+        if self.status == "up" :
+            self.floorRequestList.sort()
+        else :
+            self.floorRequestList.sort()
+        
+
+    
     def operateDoors(self):
         self.door.status = "opened"
 
