@@ -1,7 +1,7 @@
 # from test_residential_controller import FloorRequestButton
 
 
-elevatorID = 1
+elevatorID =  1 
 floorRequestButtonID = 1
 callButtonID = 1
 
@@ -22,13 +22,13 @@ class Column:
 
         for i in range(1,_amountOfFloors):
             if (i < _amountOfFloors):
-                callButton = CallButton(callButtonID, "off", buttonFloor, "up")
+                callButton = CallButton(callButtonID, "off", buttonFloor)#"up"
                 self.callButtonList.append(callButton)
                 self.callButtonID += 1
             if (i > 1):
-                callButton = CallButton(callButtonID, "off", buttonFloor, "down")
+                callButton = CallButton(callButtonID, "off", buttonFloor, "down")#"down"
                 self.callButtonList.append(callButton)
-                self.callButtonID += 1
+                callButtonID += 1
         buttonFloor += 1
 
     def createElevators(self ,_amountOfFloors, _amountOfElevators):
